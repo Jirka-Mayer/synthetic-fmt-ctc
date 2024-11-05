@@ -1,1 +1,3 @@
 smashcima==0.1.0
+music21==9.3.0
+converter21==3.2.0
