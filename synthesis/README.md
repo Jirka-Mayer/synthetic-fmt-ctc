@@ -33,3 +33,14 @@ Install musescore:
 ```
 make install-musescore
 ```
+
+
+## How to build the synthetic data
+
+Roughly this:
+
+1. Take all primus incipits
+2. Glue them all together into one long monophonic song
+3. Split them up into 2-5 measure long systems
+
+This makes sure there are system breaks mid-incipit as well as key and clef changes mid-system.
