@@ -5,12 +5,12 @@ import music21
 import converter21
 import music21.stream.base
 import cv2
-from Primus2018Enumerator import Primus2018Enumerator
-from mei_remove_multirests import mei_remove_multirests
-from remove_problematic_notation import remove_problematic_notation
-from AsIterable import AsIterable
-from MuseScoreRefiner import MuseScoreRefiner
-from ModelM import ModelM
+from .Primus2018Enumerator import Primus2018Enumerator
+from .mei_remove_multirests import mei_remove_multirests
+from .remove_problematic_notation import remove_problematic_notation
+from .AsIterable import AsIterable
+from .MuseScoreRefiner import MuseScoreRefiner
+from .ModelM import ModelM
 import random
 import logging
 
@@ -56,9 +56,7 @@ def build_synthetic_dataset(
         # synthesis
         try:
             scene = model(data=xml, format=".musicxml")
-            # assert len(scene.pages) == 1
-            if len(scene.pages) > 1:
-                print("MORE THAN ONE PAGE!") # TODO: DEBUG
+            assert len(scene.pages) == 1, "Expected only one page"
             img = scene.render(scene.pages[0])
             cv2.imwrite(str(png_path), img)
         except:
@@ -169,11 +167,11 @@ def mei_to_crude_xml(
         yield crude_xml
 
 
-# .venv/bin/python3 build_synthetic_dataset.py
+# .venv/bin/python3 -m app.build_synthetic_dataset
 if __name__ == "__main__":
+    from .config import PRIMUS_TGZ_PATH, TMP_FOLDER
     converter21.register()
-    data_folder = (Path(__file__).parent / ".." / "data").resolve()
     build_synthetic_dataset(
-        primus_tgz_path=data_folder / "primusCalvoRizoAppliedSciences2018.tgz",
-        tmp_folder=data_folder / "tmp"
+        primus_tgz_path=PRIMUS_TGZ_PATH,
+        tmp_folder=TMP_FOLDER
     )

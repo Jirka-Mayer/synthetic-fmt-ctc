@@ -20,10 +20,10 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
         super().register_services()
 
         # TODO: DBEUG: disable the background texture temporarily
-        # self.container.interface(
-        #     sc.synthesis.PaperSynthesizer,
-        #     sc.synthesis.SolidColorPaperSynthesizer
-        # )
+        self.container.interface(
+            sc.synthesis.PaperSynthesizer,
+            sc.synthesis.SolidColorPaperSynthesizer
+        )
     
     def configure_services(self):
         super().configure_services()
@@ -61,7 +61,7 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
 
     def call(self, score: sc.Score) -> BaseHandwrittenScene:
         scene = super().call(score)
-        assert len(scene.pages) == 1
+        assert len(scene.pages) == 1, "Expected only one page"
         page = scene.pages[0]
 
         # wrap the page in another space that zooms out the page a little

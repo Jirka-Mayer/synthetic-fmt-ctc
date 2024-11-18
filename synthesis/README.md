@@ -19,7 +19,7 @@ python3 -m venv .venv
 Put the `fmt.tgz` file directly inside the `data` folder. Then unpack the FMT dataset:
 
 ```bash
-.venv/bin/python3 unpack_fmt_dataset.py
+.venv/bin/python3 -m app.unpack_fmt_dataset
 ```
 
 Download the PrIMuS dataset (273.6 MB):
@@ -33,14 +33,3 @@ Install musescore:
 ```
 make install-musescore
 ```
-
-
-## How to build the synthetic data
-
-Roughly this:
-
-1. Take all primus incipits
-2. Glue them all together into one long monophonic song
-3. Split them up into 2-5 measure long systems
-
-This makes sure there are system breaks mid-incipit as well as key and clef changes mid-system.

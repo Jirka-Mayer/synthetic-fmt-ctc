@@ -1,7 +1,7 @@
 import converter21
 from pathlib import Path
-from build_synthetic_dataset import prepare_xml_incipit_stream
-from Primus2018Enumerator import Primus2018Enumerator
+from .build_synthetic_dataset import prepare_xml_incipit_stream
+from .Primus2018Enumerator import Primus2018Enumerator
 import smashcima as sc
 import logging
 import traceback
@@ -63,13 +63,13 @@ def test_primus_synthesis(
 
 
 
-# .venv/bin/python3 test_primus_synthesis.py
+# .venv/bin/python3 -m app.test_primus_synthesis
 if __name__ == "__main__":
+    from .config import DATA_FOLDER, PRIMUS_TGZ_PATH, TMP_FOLDER
     converter21.register()
-    data_folder = (Path(__file__).parent / ".." / "data").resolve()
     test_primus_synthesis(
-        primus_tgz_path=data_folder / "primusCalvoRizoAppliedSciences2018.tgz",
-        tmp_folder=data_folder / "tmp",
-        problematic_xml_folder=data_folder / "primus_problematic"
+        primus_tgz_path=PRIMUS_TGZ_PATH,
+        tmp_folder=TMP_FOLDER,
+        problematic_xml_folder=DATA_FOLDER / "primus_problematic"
     )
 

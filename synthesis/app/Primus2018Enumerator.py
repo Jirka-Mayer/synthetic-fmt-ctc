@@ -115,14 +115,15 @@ class Primus2018Enumerator:
                     del buffer[incipit_id]
 
 
-# .venv/bin/python3 Primus2018Enumerator.py
+# .venv/bin/python3 -m app.Primus2018Enumerator
 if __name__ == "__main__":
     from collections import Counter
     from tqdm import tqdm
+    from .config import PRIMUS_TGZ_PATH
 
     data_folder = (Path(__file__).parent / ".." / "data").resolve()
     primus = Primus2018Enumerator(
-        primus_tgz_path=data_folder / "primusCalvoRizoAppliedSciences2018.tgz",
+        primus_tgz_path=PRIMUS_TGZ_PATH,
     )
     
     vocabulary: Counter = Counter()
