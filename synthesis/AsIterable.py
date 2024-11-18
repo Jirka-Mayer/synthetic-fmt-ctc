@@ -1,10 +1,10 @@
-from typing import Generator, TypeVar, Callable
+from typing import Generator, TypeVar, Callable, Generic
 
 
 T = TypeVar("T")
 
 
-class AsIterable:
+class AsIterable(Generic[T]):
     """
     A wrapper for generator functions that turns them into iterables.
 
