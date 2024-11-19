@@ -1,4 +1,3 @@
-import converter21
 from pathlib import Path
 from .primus.Primus2018Iterable import Primus2018Iterable
 from .primus.start_primus_musicxml_iterator import \

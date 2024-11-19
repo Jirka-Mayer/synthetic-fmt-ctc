@@ -1,28 +1,40 @@
+import random
+
 import smashcima as sc
-from smashcima.synthesis.page.SimplePageSynthesizer import PageSetup
 from smashcima.orchestration.BaseHandwrittenModel import BaseHandwrittenScene
+from smashcima.synthesis.page.SimplePageSynthesizer import PageSetup
 
 
-class ModelM(sc.orchestration.BaseHandwrittenModel):
+class ModelC(sc.orchestration.BaseHandwrittenModel):
     # rasterization
-    DPI = 124.6
+    DPI = 365
     
     # stafflines
-    STAFF_LINE_THICKNESS = sc.px_to_mm(2, dpi=DPI)
-    STAFF_SPACE_UNIT = sc.px_to_mm(10.75, dpi=DPI)
+    STAFF_LINE_THICKNESS = sc.px_to_mm(7, dpi=DPI)
+    STAFF_SPACE_UNIT = sc.px_to_mm(30.75, dpi=DPI)
     STAFF_LINE_COLOR = (0, 0, 0, 105)
     
     # page tilt and positioning
     TILT_ANGLE_DEG = 0.2
-    PAGE_SHIFT = sc.px_to_mm(3, dpi=DPI)
+    PAGE_SHIFT = sc.px_to_mm(9, dpi=DPI)
+
+    def __init__(self, rng: random.Random):
+        self._rng = rng
+        super().__init__()
 
     def register_services(self):
         super().register_services()
 
+        # use the externally-given RNG
+        self.container.instance(random.Random, self._rng)
+
         # TODO: DBEUG: disable the background texture temporarily
-        self.container.interface(
+        paper_synth = sc.synthesis.SolidColorPaperSynthesizer()
+        paper_synth.color = (246, 239, 244, 255)
+        paper_synth.dpi = self.DPI
+        self.container.instance(
             sc.synthesis.PaperSynthesizer,
-            sc.synthesis.SolidColorPaperSynthesizer
+            paper_synth
         )
     
     def configure_services(self):
@@ -33,16 +45,13 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
             sc.synthesis.SimplePageSynthesizer
         )
         page_synth.page_setup = PageSetup(
-            # almost A5 landscape
-            size = sc.Vector2(
-                sc.px_to_mm(1000, dpi=self.DPI),
-                sc.px_to_mm(726, dpi=self.DPI)
-            ),
-            padding_top=sc.px_to_mm(135, dpi=self.DPI),
-            padding_bottom=sc.px_to_mm(130, dpi=self.DPI),
-            padding_left=0,
-            padding_right=0,
-            staff_count=5
+            # A4 portrait
+            size = sc.Vector2(210, 297),
+            padding_top=sc.px_to_mm(266, dpi=self.DPI),
+            padding_bottom=sc.px_to_mm(303, dpi=self.DPI),
+            padding_left=sc.px_to_mm(200, dpi=self.DPI),
+            padding_right=sc.px_to_mm(200, dpi=self.DPI),
+            staff_count=12
         )
 
         # configure stafflines width and spacing
@@ -77,7 +86,7 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
                 -page.view_box.rectangle.height / 2
             )
         ) \
-            .then(sc.Transform.scale(1_000 / 1_024)) \
+            .then(sc.Transform.scale(3_000 / 3_300)) \
             .then(sc.Transform.rotateDegCC(
                 self.rng.normalvariate(0, self.TILT_ANGLE_DEG)
             )) \
@@ -88,9 +97,9 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
                 )
             ))
 
-        # the new viewport is 1024x761 pixels in the model DPI
-        view_width = sc.px_to_mm(1024, dpi=self.DPI)
-        view_height = sc.px_to_mm(761, dpi=self.DPI)
+        # the new viewport is 3_298x4_462 pixels in the model DPI
+        view_width = sc.px_to_mm(3_298, dpi=self.DPI)
+        view_height = sc.px_to_mm(4_462, dpi=self.DPI)
         view_box = sc.ViewBox(
             space=zoomed_out_space,
             rectangle=sc.Rectangle(
@@ -104,6 +113,6 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
 
         # set the scene renderrer properties
         scene.renderer.dpi = self.DPI
-        scene.renderer.background_color = (242, 244, 244, 255)
+        scene.renderer.background_color = (86, 78, 79, 255)
 
         return scene

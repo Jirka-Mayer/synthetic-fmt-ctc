@@ -36,22 +36,26 @@ def refine_musicxml_batch_via_musescore(
         with open(conversions[i][0], "w") as f:
             f.write(xml)
 
-    # execute musescore
-    execute_musescore_conversions(
-        conversions=conversions,
-        soft=False
-    )
+    try:
 
-    # load the refined batch
-    refined_batch: List[str] = []
-    for i, xml in enumerate(musicxml_batch):
-        with open(conversions[i][1], "r") as f:
-            refined_batch.append(f.read())
-    
-    # delete all files
-    for crude, refined in conversions:
-        crude.unlink()
-        refined.unlink()
+        # execute musescore
+        execute_musescore_conversions(
+            conversions=conversions,
+            soft=False
+        )
+
+        # load the refined batch
+        refined_batch: List[str] = []
+        for i, xml in enumerate(musicxml_batch):
+            with open(conversions[i][1], "r") as f:
+                refined_batch.append(f.read())
+        
+    finally:
+
+        # delete all files
+        for crude, refined in conversions:
+            crude.unlink()
+            refined.unlink()
     
     return refined_batch
 

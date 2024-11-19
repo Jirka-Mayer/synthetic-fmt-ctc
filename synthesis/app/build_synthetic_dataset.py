@@ -12,7 +12,8 @@ import numpy as np
 import smashcima as sc
 
 from .kern.slice_kern_measures import slice_kern_measures
-from .ModelM import ModelM
+from .synthesis.ModelC import ModelC
+from .synthesis.ModelM import ModelM
 from .primus.start_primus_musicxml_iterator import \
     start_primus_musicxml_iterator
 from .semantic.PageContent import PageContent
@@ -28,22 +29,21 @@ def build_synthetic_dataset(
 ):
     rng = random.Random(42)
     
-    # TODO: pass rng into the model
-    M_model = ModelM()
-    C_model = None # TODO: define C model
+    M_model = ModelM(rng)
+    C_model = ModelC(rng)
 
     # iterate over primus incipits in MusicXML form
     primus_musicxml_iterator = start_primus_musicxml_iterator(
         primus_tgz_path=primus_tgz_path,
         tmp_folder=tmp_folder,
-        musescore_batch_size=10,
+        musescore_batch_size=100,
         with_tqdm=True
     )
 
     # slice the stream to only selected incipits
-    primus_musicxml_iterator = itertools.islice(
-        primus_musicxml_iterator, 10
-    )
+    # primus_musicxml_iterator = itertools.islice(
+    #     primus_musicxml_iterator, 10
+    # )
 
     # open all the output CSV files (pages and staves for both domains)
     output_folder.mkdir(parents=True, exist_ok=True)
@@ -58,8 +58,7 @@ def build_synthetic_dataset(
 
         # until incipits get exhausted
         while True:
-            # dataset_domain = rng.choice(["C", "M"])
-            dataset_domain = "M" # TODO: DEBUG: sample M only for now
+            dataset_domain = rng.choice(["C", "M"])
             
             page_layout = (
                 PageLayout.sample_M_domain(rng)

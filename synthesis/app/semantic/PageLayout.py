@@ -38,4 +38,8 @@ class PageLayout:
 
     @staticmethod
     def sample_C_domain(rng: random.Random) -> "PageLayout":
-        raise NotImplementedError
+        return PageLayout.sample(
+            rng,
+            staves=(2, 8),
+            measures_per_staff=(3, 5),
+        )
