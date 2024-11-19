@@ -27,8 +27,8 @@ class PageContent:
     musicxml: str
     """MusicXML contents of the page"""
 
-    smashcima_score: sc.Score
-    """The smashcima score of the content"""
+    # smashcima_score: sc.Score
+    # """The smashcima score of the content"""
 
     kern: str
     """The kern contents of the page"""

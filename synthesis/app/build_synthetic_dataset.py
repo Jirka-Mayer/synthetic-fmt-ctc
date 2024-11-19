@@ -129,8 +129,8 @@ def synthesize_page(
     # synthesis
     try:
         scene = model(
-            score=page_content.smashcima_score,
-            clone_score=False
+            data=page_content.musicxml,
+            format=".musicxml"
         )
         assert len(scene.pages) == 1, "Expected only one page"
         scene_page = scene.pages[0]

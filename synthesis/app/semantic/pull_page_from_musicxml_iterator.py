@@ -49,8 +49,9 @@ def pull_page_from_musicxml_iterator(
     musicxml = musicxml_exporter.parse(music21_score).decode("utf-8")
 
     # parse to smashcima score
-    smashcima_loader = sc.loading.MusicXmlLoader(errout=sys.stdout)
-    smashcima_score = smashcima_loader.load_xml(musicxml)
+    # NOTE: nope, let the synthesizer, because it might crash occasionally
+    # smashcima_loader = sc.loading.MusicXmlLoader(errout=sys.stdout)
+    # smashcima_score = smashcima_loader.load_xml(musicxml)
 
     # export the score to kern
     kern = _music21_to_kern(music21_score)
@@ -62,7 +63,7 @@ def pull_page_from_musicxml_iterator(
         incipits=incipits,
         music21_score=music21_score,
         musicxml=musicxml,
-        smashcima_score=smashcima_score,
+        # smashcima_score=smashcima_score,
         kern=kern
     )
 
