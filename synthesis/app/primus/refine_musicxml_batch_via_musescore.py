@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 import tempfile
 import uuid
 from pathlib import Path
@@ -60,7 +61,6 @@ def execute_musescore_conversions(
     """Executes MuseScore on a conversions.json file"""
 
     # create the conversion json file
-    print(f"Preparing musescore batch file...")
     batch_instructions = []
     for source_path, target_path in conversions:
         if soft and target_path.is_file():
@@ -79,9 +79,15 @@ def execute_musescore_conversions(
         json.dump(batch_instructions, tmp)
         tmp.close()
 
-        assert os.system(
-            f"{MSCORE_COMMAND} -j \"{tmp.name}\""
-        ) == 0
+        result = subprocess.run(
+            [MSCORE_COMMAND, "-j", tmp.name],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode != 0:
+            print("MUSESCORE STANDARD ERROR OUTPUT:")
+            print(result.stderr)
+            raise Exception("MuseScore did not terminate successfully")
     finally:
         tmp.close()
         os.unlink(tmp.name)
