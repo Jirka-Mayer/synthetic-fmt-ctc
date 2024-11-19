@@ -8,6 +8,7 @@ from smashcima.synthesis.page.SimplePageSynthesizer import PageSetup
 class ModelC(sc.orchestration.BaseHandwrittenModel):
     # rasterization
     DPI = 365
+    RASTERIZATION_DPI = 120 # to save disk space
     
     # stafflines
     STAFF_LINE_THICKNESS = sc.px_to_mm(7, dpi=DPI)
@@ -112,7 +113,7 @@ class ModelC(sc.orchestration.BaseHandwrittenModel):
         page.view_box = view_box
 
         # set the scene renderrer properties
-        scene.renderer.dpi = self.DPI
+        scene.renderer.dpi = self.RASTERIZATION_DPI
         scene.renderer.background_color = (86, 78, 79, 255)
 
         return scene
