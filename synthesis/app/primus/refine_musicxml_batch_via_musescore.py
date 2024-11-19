@@ -19,6 +19,8 @@ def refine_musicxml_batch_via_musescore(
     and much more. Acts as MusicXML canonicalization for the synthesizer.
     """
 
+    tmp_folder.mkdir(parents=True, exist_ok=True)
+
     # generate pairs of paths "crude_file", "refined_file"
     prefix = str(uuid.uuid4())
     conversions = [

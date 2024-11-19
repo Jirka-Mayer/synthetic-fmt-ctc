@@ -7,6 +7,7 @@ import music21.stream.base
 import smashcima as sc
 from converter21.humdrum.humdrumwriter import HumdrumWriter
 
+from ..kern.clean_up_music21_kern_output import clean_up_music21_kern_output
 from ..primus.start_primus_musicxml_iterator import MusicXmlIncipit
 from .PageContent import PageContent
 from .PageLayout import PageLayout
@@ -35,7 +36,7 @@ def pull_page_from_musicxml_iterator(
     # no more incipits available
     if taken_measures == 0:
         return None
-    
+
     # build the complete music21 score
     music21_score = _concatenate_music21_scores_and_clip(
         music21_scores,
@@ -53,8 +54,7 @@ def pull_page_from_musicxml_iterator(
 
     # export the score to kern
     kern = _music21_to_kern(music21_score)
-
-    # TODO: clean up the output kern here
+    kern = clean_up_music21_kern_output(kern)
 
     return PageContent(
         identifier=_build_page_identifier(incipits),

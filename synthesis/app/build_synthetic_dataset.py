@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import itertools
 import logging
 import random
@@ -10,7 +11,7 @@ import cv2
 import numpy as np
 import smashcima as sc
 
-from .kern.slice_measures import slice_kern_measures
+from .kern.slice_kern_measures import slice_kern_measures
 from .ModelM import ModelM
 from .primus.start_primus_musicxml_iterator import \
     start_primus_musicxml_iterator
@@ -35,13 +36,13 @@ def build_synthetic_dataset(
     primus_musicxml_iterator = start_primus_musicxml_iterator(
         primus_tgz_path=primus_tgz_path,
         tmp_folder=tmp_folder,
-        musescore_batch_size=100,
+        musescore_batch_size=10,
         with_tqdm=True
     )
 
     # slice the stream to only selected incipits
     primus_musicxml_iterator = itertools.islice(
-        primus_musicxml_iterator, 100
+        primus_musicxml_iterator, 10
     )
 
     # open all the output CSV files (pages and staves for both domains)
@@ -267,7 +268,10 @@ def file_path(
     format: str,
 ) -> Path:
     bucket_count = 10
-    id_hash = str(hash(page_identifier) % bucket_count).zfill(2)
+    identifier_hash_sum = sum(
+        hashlib.md5(page_identifier.encode("utf-8")).digest()
+    )
+    id_hash = str(identifier_hash_sum % bucket_count).zfill(2)
     
     page_or_staff = "page" if staff_index is None else "staff"
     
