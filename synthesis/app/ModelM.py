@@ -8,8 +8,8 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
     DPI = 124.6
     
     # stafflines
-    STAFF_LINE_WIDTH = sc.px_to_mm(2, dpi=DPI)
-    STAFF_SPACE = sc.px_to_mm(10.75, dpi=DPI)
+    STAFF_LINE_THICKNESS = sc.px_to_mm(2, dpi=DPI)
+    STAFF_SPACE_UNIT = sc.px_to_mm(10.75, dpi=DPI)
     STAFF_LINE_COLOR = (0, 0, 0, 105)
     
     # page tilt and positioning
@@ -50,8 +50,8 @@ class ModelM(sc.orchestration.BaseHandwrittenModel):
             sc.synthesis.StafflinesSynthesizer
         )
         assert type(stafflines_synth) is sc.synthesis.NaiveStafflinesSynthesizer
-        stafflines_synth.line_width = self.STAFF_LINE_WIDTH
-        stafflines_synth.staff_space = self.STAFF_SPACE
+        stafflines_synth.line_thickness = self.STAFF_LINE_THICKNESS
+        stafflines_synth.staff_space_unit = self.STAFF_SPACE_UNIT
         stafflines_synth.line_color = self.STAFF_LINE_COLOR
 
         # configure music layouting

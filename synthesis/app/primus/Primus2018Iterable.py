@@ -71,7 +71,7 @@ class Incipit:
         return self.agnostic.count("barline-L1") + 1
     
 
-class Primus2018Enumerator:
+class Primus2018Iterable:
     """Provides access to the PrIMuS 2018 dataset as a list of
     Incipit instance."""
 
@@ -102,9 +102,10 @@ class Primus2018Enumerator:
                 for format in ["agnostic", "mei"]:
                     if item.name != incipit.get_filename(format):
                         continue
-                    with archive.extractfile(item) as f:
-                        data = f.read().decode("utf-8")
-                        setattr(incipit, format, data)
+                    f = archive.extractfile(item)
+                    assert f is not None
+                    data = f.read().decode("utf-8")
+                    setattr(incipit, format, data)
                 
                 if incipit._is_complete():
                     del buffer[incipit_id]
@@ -119,10 +120,10 @@ class Primus2018Enumerator:
 if __name__ == "__main__":
     from collections import Counter
     from tqdm import tqdm
-    from .config import PRIMUS_TGZ_PATH
+    from ..config import PRIMUS_TGZ_PATH
 
     data_folder = (Path(__file__).parent / ".." / "data").resolve()
-    primus = Primus2018Enumerator(
+    primus = Primus2018Iterable(
         primus_tgz_path=PRIMUS_TGZ_PATH,
     )
     

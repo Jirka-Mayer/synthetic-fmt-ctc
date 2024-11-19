@@ -1,7 +1,8 @@
 import converter21
 from pathlib import Path
-from .build_synthetic_dataset import prepare_xml_incipit_stream
-from .Primus2018Enumerator import Primus2018Enumerator
+from .primus.Primus2018Iterable import Primus2018Iterable
+from .primus.start_primus_musicxml_iterator import \
+    start_primus_musicxml_iterator
 import smashcima as sc
 import logging
 import traceback
@@ -30,25 +31,31 @@ def test_primus_synthesis(
     problematic_xml_folder.mkdir(exist_ok=True, parents=True)
 
     # load the primus dataset as a sequence of incipits
-    primus = Primus2018Enumerator(primus_tgz_path)
-    xml_incipit_stream = prepare_xml_incipit_stream(
+    primus = Primus2018Iterable(primus_tgz_path)
+    primus_musicxml_iterator = start_primus_musicxml_iterator(
         primus_tgz_path=primus_tgz_path,
-        tmp_folder=tmp_folder
+        tmp_folder=tmp_folder,
+        musescore_batch_size=10
     )
 
     model = TestModel()
 
-    for incipit, xml in zip(tqdm.tqdm(primus), xml_incipit_stream):
+    for incipit in tqdm.tqdm(
+        primus_musicxml_iterator,
+        total=len(primus)
+    ):
+        incipit_id = incipit.original_incipit.incipit_id
+        
         xml_path = problematic_xml_folder / (
-            incipit.incipit_id.split("/")[2] + ".musicxml"
+            incipit_id.split("/")[2] + ".musicxml"
         )
         try:
-            model(data=xml, format=".musicxml")
+            model(data=incipit.musicxml, format=".musicxml")
         except Exception as e:
-            logging.exception(f"Incipit failed: {incipit.incipit_id}")
+            logging.exception(f"Incipit failed: {incipit_id}")
 
             with open(xml_path, "w") as f:
-                f.write(xml)
+                f.write(incipit.musicxml)
             
             with open(xml_path.with_suffix(".log"), "w") as f:
                 print(
@@ -66,7 +73,6 @@ def test_primus_synthesis(
 # .venv/bin/python3 -m app.test_primus_synthesis
 if __name__ == "__main__":
     from .config import DATA_FOLDER, PRIMUS_TGZ_PATH, TMP_FOLDER
-    converter21.register()
     test_primus_synthesis(
         primus_tgz_path=PRIMUS_TGZ_PATH,
         tmp_folder=TMP_FOLDER,
