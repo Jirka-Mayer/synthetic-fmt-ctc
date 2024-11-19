@@ -2,6 +2,7 @@ import itertools
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
+import tqdm
 
 from .mei_to_crude_musicxml import mei_to_crude_musicxml
 from .Primus2018Iterable import Incipit, Primus2018Iterable
@@ -18,11 +19,17 @@ class MusicXmlIncipit:
 def start_primus_musicxml_iterator(
     primus_tgz_path: Path,
     tmp_folder: Path,
-    musescore_batch_size: int
+    musescore_batch_size: int,
+    with_tqdm: bool = False
 ) -> Iterator[MusicXmlIncipit]:
     """Returns an iterator that returns MusicXML incipits"""
 
-    primus_iterator = iter(Primus2018Iterable(primus_tgz_path))
+    primus = Primus2018Iterable(primus_tgz_path)
+
+    if with_tqdm:
+        progress_bar = tqdm.tqdm(total=len(primus))
+
+    primus_iterator = iter(primus)
     
     while incipit_batch := tuple(
         itertools.islice(primus_iterator, musescore_batch_size)
@@ -40,7 +47,13 @@ def start_primus_musicxml_iterator(
         for musicxml, incipit in zip(
             refined_musicxml_batch, incipit_batch
         ):
+            if with_tqdm:
+                progress_bar.update(1)
+
             yield MusicXmlIncipit(
                 musicxml=musicxml,
                 original_incipit=incipit
             )
+    
+    if with_tqdm:
+        progress_bar.close()

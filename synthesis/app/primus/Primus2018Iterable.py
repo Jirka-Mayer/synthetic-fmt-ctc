@@ -75,16 +75,17 @@ class Primus2018Iterable:
     """Provides access to the PrIMuS 2018 dataset as a list of
     Incipit instance."""
 
+    FULL_INCIPIT_COUNT = 87678 # the complete PrIMuS dataset
+    NON_SKIPPED_INCIPIT_COUNT = 84381 # without unsynthetisable note durations
+    # other numbers:
+    # return 67119 # without multi-measure rests only
+    # return 74638 # without grace notes only
+
     def __init__(self, primus_tgz_path: Path):
         self.primus_tgz_path = primus_tgz_path
 
     def __len__(self) -> int:
-        # return 87678 # the complete PrIMuS dataset
-        return 84381 # without unsynthetisable note durations
-    
-        # other numbers:
-        # return 67119 # without multi-measure rests only
-        # return 74638 # without grace notes only
+        return self.NON_SKIPPED_INCIPIT_COUNT
 
     def __iter__(self) -> Generator[Incipit, None, None]:
         # incipit_id to incipit instance
