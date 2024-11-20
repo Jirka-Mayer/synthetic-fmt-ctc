@@ -66,30 +66,38 @@ def build_synthetic_dataset(
                 else PageLayout.sample_C_domain(rng)
             )
 
-            page_content = pull_page_from_musicxml_iterator(
-                primus_musicxml_iterator=primus_musicxml_iterator,
-                page_layout=page_layout
-            )
+            try:
+                page_content = pull_page_from_musicxml_iterator(
+                    primus_musicxml_iterator=primus_musicxml_iterator,
+                    page_layout=page_layout
+                )
+            except:
+                logging.exception("Error loading page content:")
+                continue
 
             if page_content is None:
                 break
 
-            use_M = (dataset_domain == "M")
-            synthesize_page(
-                dataset_domain=dataset_domain,
-                page_content=page_content,
-                output_folder=output_folder,
-                pages_csv_writerow=(
-                    M_pages_csv.writerow
-                    if use_M else C_pages_csv.writerow
-                ),
-                staves_csv_writerow=(
-                    M_staves_csv.writerow
-                    if use_M else C_staves_csv.writerow
-                ),
-                model=(M_model if use_M else C_model),
-                rng=rng
-            )
+            try:
+                use_M = (dataset_domain == "M")
+                synthesize_page(
+                    dataset_domain=dataset_domain,
+                    page_content=page_content,
+                    output_folder=output_folder,
+                    pages_csv_writerow=(
+                        M_pages_csv.writerow
+                        if use_M else C_pages_csv.writerow
+                    ),
+                    staves_csv_writerow=(
+                        M_staves_csv.writerow
+                        if use_M else C_staves_csv.writerow
+                    ),
+                    model=(M_model if use_M else C_model),
+                    rng=rng
+                )
+            except:
+                logging.exception("Error around synthesis somewhere:")
+                continue
 
 
 def synthesize_page(
